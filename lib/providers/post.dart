@@ -9,6 +9,7 @@ class Post with ChangeNotifier {
   final String dayLost;
   final String facebock;
   final String imageUrl;
+  final String phone;
   bool isFavorite;
   Post({
     @required this.id,
@@ -18,6 +19,7 @@ class Post with ChangeNotifier {
     @required this.dayLost,
     @required this.facebock,
     @required this.imageUrl,
+    @required this.phone,
     this.isFavorite = false,
   });
   void _setFavValue(bool newValue) {

@@ -151,7 +151,7 @@ class PersonDetailsScreen extends StatelessWidget {
                   SizedBox(width: 20,),
                   RaisedButton(
                 onPressed: () async {
-                  await launch(loadedPerson.facebock);
+                  await launch("tel:${loadedPerson.phone}");
                 },
                 textColor: Colors.white,
                 padding: const EdgeInsets.all(0.0),

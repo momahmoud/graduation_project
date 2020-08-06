@@ -19,22 +19,25 @@ class EditPersonScreen extends StatefulWidget {
 
 class _EditProductScreenState extends State<EditPersonScreen> {
   static String _imageUrl;
+  static String locationController;
   final _dayLostFocusNode = FocusNode();
   final _descruptionFocusNode = FocusNode();
   final _locationFocusNode = FocusNode();
   final _facebockFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
+  final _phoneFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   var _editProduct = Post(
-      id: null,
-      name: '',
-      description: '',
-      imageUrl: _imageUrl,
-      dayLost: '',
-      location: '',
-      facebock: '',
 
+    id: null,
+    name: '',
+    description: '',
+    imageUrl: _imageUrl,
+    dayLost: '',
+    location: locationController,
+    facebock: '',
+    phone: ''
   );
   @override
   void initState() {
@@ -45,14 +48,14 @@ class _EditProductScreenState extends State<EditPersonScreen> {
   var _isInit = true;
   var _isloading = false;
   var _initValues = {
+    'phone': "",
     'id': "",
     'name': "",
     'description': "",
     'imageUrl': _imageUrl,
     'dayLost': "",
-    'location': "",
+    'location': locationController,
     'facebock': "",
-
   };
   @override
   void didChangeDependencies() {
@@ -64,13 +67,14 @@ class _EditProductScreenState extends State<EditPersonScreen> {
         _initValues = {
           'name': _editProduct.name,
           'description': _editProduct.description,
-          'location': _editProduct.location,
+          'location': locationController,
           'facebock': _editProduct.facebock,
           'imageUrl': _imageUrl,
           'dayLost': _editProduct.dayLost,
-
+          'phone': _editProduct.phone,
         };
         _imageUrl = _editProduct.imageUrl;
+        locationController = _editProduct.location;
       }
     }
     _isInit = false;
@@ -82,7 +86,7 @@ class _EditProductScreenState extends State<EditPersonScreen> {
     _imageUrlFocusNode.removeListener(_updatImageUrl);
     _dayLostFocusNode.dispose();
     _locationFocusNode.dispose();
-
+    _phoneFocusNode.dispose();
     _descruptionFocusNode.dispose();
     _facebockFocusNode.dispose();
     _imageUrlController.dispose();
@@ -117,8 +121,9 @@ class _EditProductScreenState extends State<EditPersonScreen> {
           .updatePerson(_editProduct.id, _editProduct);
     } else {
       try {
-        await Provider.of<Posts>(context, listen: false)
-            .addPerson(_editProduct, );
+        await Provider.of<Posts>(context, listen: false).addPerson(
+          _editProduct,
+        );
       } catch (error) {
         await showDialog(
             context: context,
@@ -133,7 +138,6 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         child: Text('Ok'))
                   ],
                 ));
-
       }
       setState(() {
         _isloading = false;
@@ -173,7 +177,8 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         textDirection: TextDirection.rtl,
                         textInputAction: TextInputAction.next,
                         onFieldSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(_dayLostFocusNode);
+                          FocusScope.of(context)
+                              .requestFocus(_dayLostFocusNode);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -191,7 +196,7 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                             dayLost: _editProduct.dayLost,
                             facebock: _editProduct.facebock,
                             id: _editProduct.id,
-
+                            phone: _editProduct.phone,
                             isFavorite: _editProduct.isFavorite,
                           );
                         },
@@ -204,7 +209,8 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         textDirection: TextDirection.rtl,
                         focusNode: _dayLostFocusNode,
                         onFieldSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(_locationFocusNode);
+                          FocusScope.of(context)
+                              .requestFocus(_phoneFocusNode);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -215,8 +221,41 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         },
                         onSaved: (value) {
                           _editProduct = Post(
+                            phone: _editProduct.phone,
                             name: _editProduct.name,
                             dayLost: value,
+                            location: _editProduct.location,
+                            description: _editProduct.description,
+                            facebock: _editProduct.facebock,
+                            imageUrl: _imageUrl,
+                            id: _editProduct.id,
+                            isFavorite: _editProduct.isFavorite,
+                          );
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _initValues['phone'],
+                        decoration: InputDecoration(labelText: 'رقم التليفون'),
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.phone,
+                        textDirection: TextDirection.rtl,
+                        focusNode: _phoneFocusNode,
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context)
+                              .requestFocus(_locationFocusNode);
+                        },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'من فضلك أدخل رقم التليفون ';
+                          }
+
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _editProduct = Post(
+                            phone: value,
+                            name: _editProduct.name,
+                            dayLost: _editProduct.dayLost,
                             location: _editProduct.location,
                             description: _editProduct.description,
                             facebock: _editProduct.facebock,
@@ -247,9 +286,10 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         },
                         onSaved: (value) {
                           _editProduct = Post(
+                            phone: _editProduct.phone,
                             name: _editProduct.name,
                             dayLost: _editProduct.dayLost,
-                            location: value,
+                            location: locationController,
                             description: _editProduct.description,
                             imageUrl: _imageUrl,
                             facebock: _editProduct.facebock,
@@ -259,28 +299,23 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         },
                       ),
 
-                    RaisedButton(
-                          onPressed: () async {
-                            Position position = await Geolocator()
-                                .getCurrentPosition(
-                                    desiredAccuracy: LocationAccuracy.high);
-                            print(position.longitude);
-                            print(position.latitude);
-                          },
-                          textColor: Colors.blue,
-
-
-                            child: Row(
-                              children: <Widget>[
-                                const Text(
-                                    '  مكانك الحالي ',
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(fontSize: 20)),
-                             IconButton(icon: Icon(Icons.location_on,color: Colors.blue,), onPressed: (){})
-                              ],
-                            ),
-
+                      RaisedButton(
+                        onPressed: getUserLocation,
+                        textColor: Colors.blue,
+                        child: Row(
+                          children: <Widget>[
+                            const Text('  مكانك الحالي ',
+                                textDirection: TextDirection.rtl,
+                                style: TextStyle(fontSize: 20)),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {})
+                          ],
                         ),
+                      ),
 
                       TextFormField(
                         initialValue: _initValues['description'],
@@ -291,7 +326,8 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         focusNode: _descruptionFocusNode,
                         keyboardType: TextInputType.multiline,
                         onFieldSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(_facebockFocusNode);
+                          FocusScope.of(context)
+                              .requestFocus(_facebockFocusNode);
                         },
                         validator: (value) {
                           if (value.isEmpty) {
@@ -305,7 +341,7 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         onSaved: (value) {
                           _editProduct = Post(
                             name: _editProduct.name,
-
+                            phone: _editProduct.phone,
                             location: _editProduct.location,
                             imageUrl: _imageUrl,
                             dayLost: _editProduct.dayLost,
@@ -318,7 +354,8 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                       ),
                       TextFormField(
                         initialValue: _initValues['facebock'],
-                        decoration: InputDecoration(labelText: 'لينك الفيس بوك'),
+                        decoration:
+                            InputDecoration(labelText: 'لينك الفيس بوك'),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.url,
                         textDirection: TextDirection.rtl,
@@ -336,6 +373,7 @@ class _EditProductScreenState extends State<EditPersonScreen> {
                         },
                         onSaved: (value) {
                           _editProduct = Post(
+                            phone: _editProduct.phone,
                             name: _editProduct.name,
                             dayLost: _editProduct.dayLost,
                             location: _editProduct.location,
@@ -457,5 +495,18 @@ class _EditProductScreenState extends State<EditPersonScreen> {
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
     String downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
+  }
+
+  getUserLocation() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemarks = await Geolocator()
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
+    String completeAddress =
+        '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
+    print(completeAddress);
+    String formattedAddress = "${placemark.locality}, ${placemark.country}";
+    locationController = formattedAddress;
   }
 }

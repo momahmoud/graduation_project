@@ -8,11 +8,10 @@ import 'dart:convert';
 class Posts with ChangeNotifier {
   List<Post> _items = [];
 
-     final String authToken;
+  final String authToken;
   final String userId;
-  Posts(this.authToken,this.userId,this._items);
+  Posts(this.authToken, this.userId, this._items);
   List<Post> get items {
-
     return _items;
   }
 
@@ -24,35 +23,35 @@ class Posts with ChangeNotifier {
     return _items.firstWhere((post) => post.id == id);
   }
 
-
-
-  Future<void> fetchAndSetPerson([bool filterByUser=false]) async {
-    final filterString=filterByUser?'orderBy="creatorId"equalTo="$userId"':'';
-   var url = 'https://lost-of-people-4abff.firebaseio.com/persons.json?auth=$authToken&$filterString';
+  Future<void> fetchAndSetPerson([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"equalTo="$userId"' : '';
+    var url =
+        'https://lost-of-people-4abff.firebaseio.com/persons.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      if(extractedData==null){
+      if (extractedData == null) {
         return;
       }
-       url = 'https://lost-of-people-4abff.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+      url =
+          'https://lost-of-people-4abff.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
 
-      final favoritrResponse= await http.get(url);
-      final favaiteData =json.decode(favoritrResponse.body);
+      final favoritrResponse = await http.get(url);
+      final favaiteData = json.decode(favoritrResponse.body);
       final List<Post> lodedProducts = [];
       extractedData.forEach((postId, postData) {
         lodedProducts.add(Post(
-            id: postId,
-
+          id: postId,
+          phone: postData['phone'],
           name: postData['name'],
           dayLost: postData['dayLost'],
           description: postData['description'],
           facebock: postData['facebock'],
           location: postData['location'],
           imageUrl: postData['imageUrl'],
-
-          isFavorite:favaiteData==null?false:  favaiteData[postId] ??false,
-
+          isFavorite:
+              favaiteData == null ? false : favaiteData[postId] ?? false,
         ));
       });
       _items = lodedProducts;
@@ -63,7 +62,8 @@ class Posts with ChangeNotifier {
   }
 
   Future<void> addPerson(Post post) async {
-    final url = 'https://lost-of-people-4abff.firebaseio.com/persons.json?auth=$authToken';
+    final url =
+        'https://lost-of-people-4abff.firebaseio.com/persons.json?auth=$authToken';
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -71,11 +71,10 @@ class Posts with ChangeNotifier {
             'description': post.description,
             'imageUrl': post.imageUrl,
             'dayLost': post.dayLost,
-            'creatorId':userId,
-            'facebock':post.facebock,
-            'location':post.location,
-
-
+            'creatorId': userId,
+            'facebock': post.facebock,
+            'location': post.location,
+            'phone': post.phone,
           }));
       final newperson = Post(
         name: post.name,
@@ -84,7 +83,7 @@ class Posts with ChangeNotifier {
         dayLost: post.dayLost,
         facebock: post.facebock,
         location: post.location,
-
+        phone: post.phone,
         id: json.decode(response.body)['name'],
       );
 
@@ -100,16 +99,17 @@ class Posts with ChangeNotifier {
   Future<void> updatePerson(String id, Post newPost) async {
     final prodIndex = _items.indexWhere((post) => post.id == id);
     if (prodIndex >= 0) {
-      final url = 'https://lost-of-people-4abff.firebaseio.com/persons/$id.json?auth=$authToken';
+      final url =
+          'https://lost-of-people-4abff.firebaseio.com/persons/$id.json?auth=$authToken';
       await http.patch(url,
           body: json.encode({
             'name': newPost.name,
-            'location':newPost.location,
+            'location': newPost.location,
             'description': newPost.description,
             'imageUrl': newPost.imageUrl,
-            'facebock':newPost.facebock,
+            'facebock': newPost.facebock,
             'dayLost': newPost.dayLost,
-
+            'phone': newPost.phone
           }));
       _items[prodIndex] = newPost;
       notifyListeners();
@@ -118,26 +118,23 @@ class Posts with ChangeNotifier {
     }
   }
 
-Future<void> deletePerson(String id) async{
-    final url = 'https://lost-of-people-4abff.firebaseio.com/persons/$id.json?auth=$authToken';
-    final existingpostIndex=_items.indexWhere((post)=>post.id==id);
-    var existingProduct=_items[existingpostIndex];
+  Future<void> deletePerson(String id) async {
+    final url =
+        'https://lost-of-people-4abff.firebaseio.com/persons/$id.json?auth=$authToken';
+    final existingpostIndex = _items.indexWhere((post) => post.id == id);
+    var existingProduct = _items[existingpostIndex];
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
     _items.removeAt(existingpostIndex);
-  final response= await  http.delete(url) ;
-      if(response.statusCode>=400){
-        throw HttpException('could not delete person.');
-      }
-      existingProduct=null;
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      throw HttpException('could not delete person.');
+    }
+    existingProduct = null;
 
     {
       _items.insert(existingpostIndex, existingProduct);
       notifyListeners();
-
+    }
   }
-}
-
-
-
 }
