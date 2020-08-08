@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -115,70 +116,31 @@ class PersonDetailsScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  RaisedButton(
+                  RaisedButton.icon(
+                    color: Colors.blue,
+                    label: Text("فيس بوك"),
+                    icon: Icon(FontAwesomeIcons.facebook),
                     onPressed: () async {
                       await launch(loadedPerson.facebock);
                     },
                     textColor: Colors.white,
                     padding: const EdgeInsets.all(0.0),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xFF0D47A1),
-                            Color(0xFF1976D2),
-                            Color(0xFF42A5F5),
-                          ],
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 0.0,
-                            ),
-                            child: const Text(
-                              'للتواصل بالفيس بوك',
-                              style: TextStyle(fontSize: 20),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    
+                      
                   ),
                   SizedBox(width: 20,),
-                  RaisedButton(
+                  RaisedButton.icon(
+                    color: Colors.blue,
+                    label: Text("الهاتف"),
+                    icon: Icon(Icons.phone),
                 onPressed: () async {
                   await launch("tel:${loadedPerson.phone}");
                 },
                 textColor: Colors.white,
                 padding: const EdgeInsets.all(0.0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: <Color>[
-                        Color(0xFF0D47A1),
-                        Color(0xFF1976D2),
-                        Color(0xFF42A5F5),
-                      ],
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(10.0),
+                
 
-
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 0.0,),
-                          child: const Text('للتواصل من خلال الهاتف',
-                              style: TextStyle(fontSize: 20),textAlign: TextAlign.center,),
-                        ),
-                       
-                      ],
-                    ),
-                  ),
+                  
 
               ),
                 ],

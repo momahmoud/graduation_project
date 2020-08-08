@@ -1,5 +1,4 @@
-import 'dart:math';
-import 'package:lostofpeople/seting_screen_details/conected_with_me.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../providers/auth.dart';

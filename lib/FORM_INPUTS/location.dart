@@ -70,11 +70,11 @@ class _MyHomePageState extends State<LocationPersonHome> {
             Center(
                 child: Container(
                     margin: EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 20.0,
+                      horizontal: 5.0,
+                      vertical: 5.0,
                     ),
                     height: 125.0,
-                    width: 275.0,
+                    width: 280.0,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         boxShadow: [

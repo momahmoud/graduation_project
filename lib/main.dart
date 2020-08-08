@@ -5,7 +5,7 @@ import './Screens/splash_screen.dart';
 import './providers/auth.dart';
 
 import './Screens/user_posts_screen.dart';
-import './Screens/posts_overview_screen.dart';
+
 import './Screens/post_details_screen.dart';
 import './providers/posts.dart';
 

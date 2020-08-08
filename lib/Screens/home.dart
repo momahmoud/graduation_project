@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
             size: 30,
           ),
           Icon(Icons.search, size: 30),
-          Icon(Icons.create, size: 30),
+          Icon(Icons.add, size: 30),
         ],
         onTap: changePage,
         index: indexPage,
